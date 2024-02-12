@@ -1,0 +1,41 @@
+import dash
+from dash import dcc, html
+import requests
+import json
+
+app = dash.Dash(__name__)
+
+# Function to fetch data from Backand
+def fetch_data():
+    url = "YOUR_BACKAND_API_ENDPOINT"
+    headers = {
+        "Authorization": "Bearer YOUR_API_TOKEN",
+        "Content-Type": "application/json"
+    }
+    response = requests.get(url, headers=headers)
+    data = response.json()
+    return data
+
+# Fetch data from Backand
+data = fetch_data()
+
+# Format data for display in cards
+cards_data = [
+    {"title": item["title"], "content": item["content"]}
+    for item in data
+]
+
+# Create layout with cards
+app.layout = html.Div([
+    html.H1("Dashboard"),
+    html.Div([
+        html.Div([
+            html.H3(card["title"]),
+            html.P(card["content"])
+        ], className="card")
+        for card in cards_data
+    ], className="card-container")
+])
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
